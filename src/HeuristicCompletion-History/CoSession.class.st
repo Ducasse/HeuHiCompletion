@@ -6,7 +6,8 @@ Class {
 	#name : 'CoSession',
 	#superclass : 'Object',
 	#instVars : [
-		'vocabularyCache'
+		'vocabularyCache',
+		'selectorStatistic'
 	],
 	#classVars : [
 		'Current'
@@ -65,7 +66,14 @@ CoSession >> addMessageInVocabulary: anAnn [
 { #category : 'vocabulary' }
 CoSession >> addNewMethodInVocabulary: anAnn [
 	
-	self addVocabulary: (anAnn selector -> anAnn method ast) at: DateAndTime now 
+	self addVocabulary: (anAnn selector -> anAnn method ast) at: DateAndTime now.
+	self addStatisticalVocabulary: anAnn selector
+]
+
+{ #category : 'vocabulary' }
+CoSession >> addStatisticalVocabulary: selector [
+
+	selectorStatistic add: selector
 ]
 
 { #category : 'vocabulary' }
@@ -78,12 +86,21 @@ CoSession >> addVocabulary: aString at: aDateAndTime [
 CoSession >> initialize [
 
 	super initialize.
-	vocabularyCache := LRUCache new maximumWeight: 1000
+	vocabularyCache := LRUCache new maximumWeight: 1000.
+	selectorStatistic := Bag new.
+	
+	
 ]
 
 { #category : 'accessing' }
 CoSession >> size [
 	^ vocabularyCache size
+]
+
+{ #category : 'accessing' }
+CoSession >> vocabularyCache [
+
+	^ vocabularyCache
 ]
 
 { #category : 'accessing' }
